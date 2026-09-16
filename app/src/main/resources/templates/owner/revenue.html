@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('売上・振込 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/owner/salons/{id}/dashboard(id=${salon.id})}">← ダッシュボード</a></p>
+    <h1>売上・振込</h1>
+
+    <div class="card">
+        <span class="stat"><span class="num" th:text="'¥' + ${total}">¥0</span>累計売上</span>
+        <span class="stat"><span class="num" th:text="'¥' + ${fee}">¥0</span>手数料(5%)</span>
+        <span class="stat"><span class="num" th:text="'¥' + ${net}">¥0</span>振込可能額</span>
+    </div>
+
+    <div class="card">
+        <form th:action="@{/api/owner/salons/{id}/payout(id=${salon.id})}" method="post">
+            <button type="submit" class="btn" th:classappend="${canPayout} ? '' : 'disabled'" th:disabled="${!canPayout}">振込を申請する</button>
+            <span class="muted" th:if="${!canPayout}">（最低振込額 ¥3,000 に達していません）</span>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>入金履歴</h2>
+        <p th:if="${rows.isEmpty()}" class="muted">入金履歴はありません。</p>
+        <table th:unless="${rows.isEmpty()}">
+            <thead><tr><th>日付</th><th>金額</th><th>手数料</th><th>振込額</th></tr></thead>
+            <tbody>
+            <tr th:each="row : ${rows}">
+                <td th:text="${@dates.date(row.invoice.createdAt)}">日付</td>
+                <td th:text="'¥' + ${row.invoice.amountJpy}">¥0</td>
+                <td th:text="'¥' + ${row.fee}">¥0</td>
+                <td th:text="'¥' + ${row.net}">¥0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

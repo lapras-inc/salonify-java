@@ -1,0 +1,26 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.iml
+*.swp
+*~
+
+# Tool-generated (GitHub Copilot App Modernization など)
+.github/modernize/
+
+# Claude Code ローカル設定
+.claude/settings.local.json
+
+# 環境変数・秘密情報
+.env
+.env.*
+!.env.example
+
+# Java / Maven (app/.gitignore の補完。ルート直下で mvn を叩いた場合など)
+target/
+*.class
+*.log

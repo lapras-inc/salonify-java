@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('投稿一覧 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/salons/{id}/home(id=${salon.id})}">← サロンホーム</a></p>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h1>投稿一覧</h1>
+        <a th:if="${isOwner}" class="btn btn-sm" th:href="@{/owner/salons/{id}/posts/new(id=${salon.id})}">+ 新規投稿</a>
+    </div>
+
+    <p th:if="${posts.isEmpty()}" class="muted">まだ投稿がありません。</p>
+    <div class="card" th:each="v : ${posts}" th:style="${v.canView} ? '' : 'opacity:0.6;'">
+        <span th:if="${v.post.pinned}">📌</span>
+        <a th:if="${v.canView}" th:href="@{/salons/{id}/posts/{pid}(id=${salon.id},pid=${v.post.id})}" th:text="${v.post.title}">タイトル</a>
+        <span th:unless="${v.canView}" th:text="'🔒 ' + ${v.post.title}">タイトル</span>
+        <span th:replace="~{fragments/common :: postBadge(${v.planName})}"></span>
+        <span class="muted" th:text="' · ' + ${@dates.date(v.post.createdAt)}">日付</span>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

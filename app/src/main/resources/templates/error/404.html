@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('ページが見つかりません — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <h1>404</h1>
+    <p>ページが見つかりませんでした。</p>
+    <a class="btn" th:href="@{/}">トップへ戻る</a>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

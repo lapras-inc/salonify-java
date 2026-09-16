@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('Salonify — オンラインサロンプラットフォーム')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+
+    <section class="card" style="text-align:center; background:linear-gradient(135deg,#eef2ff,#faf5ff);">
+        <h1>誰でも、月額サブスクのコミュニティを。</h1>
+        <p class="muted">手数料わずか5%（決済手数料込み）。審査なし・即日開設。</p>
+        <p style="margin-top:16px;">
+            <a class="btn" th:href="@{/owner/salons/new}">サロンを開設する</a>
+            <a class="btn btn-secondary" th:href="@{/salons}">サロンを探す</a>
+        </p>
+    </section>
+
+    <h2>新着サロン</h2>
+    <p th:if="${cards.isEmpty()}" class="muted">まだサロンがありません。</p>
+    <div class="grid">
+        <th:block th:each="card : ${cards}">
+            <div th:replace="~{fragments/common :: salonCard(${card})}"></div>
+        </th:block>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

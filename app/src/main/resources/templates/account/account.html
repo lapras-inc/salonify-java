@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('アカウント設定 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <h1>アカウント設定</h1>
+
+    <form th:action="@{/api/account/update}" method="post" class="card form-narrow">
+        <label>表示名</label>
+        <input type="text" name="displayName" maxlength="40" th:value="${currentUser.displayName}" required>
+        <label>自己紹介</label>
+        <textarea name="bio" th:text="${currentUser.bio}"></textarea>
+        <label>アイコン画像URL</label>
+        <input type="text" name="avatarUrl" th:value="${currentUser.avatarUrl}">
+        <div style="margin-top:12px;"><button type="submit" class="btn">保存する</button></div>
+    </form>
+
+    <div class="card form-narrow">
+        <a class="btn btn-secondary" th:href="@{/account/billing}">支払い・課金管理へ</a>
+    </div>
+
+    <div class="card form-narrow">
+        <h2>退会</h2>
+        <form th:action="@{/api/account/delete}" method="post"
+              onsubmit="return confirm('本当に退会しますか？この操作は取り消せません。');">
+            <button type="submit" class="btn btn-danger">退会する</button>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

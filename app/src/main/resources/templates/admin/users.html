@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('ユーザー管理 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/admin}">← 管理トップ</a></p>
+    <h1>ユーザー管理</h1>
+
+    <form method="get" th:action="@{/admin/users}" style="margin-bottom:12px;">
+        <input type="text" name="q" th:value="${q}" placeholder="メールアドレスで検索" style="width:300px;display:inline;">
+        <button type="submit" class="btn btn-sm">検索</button>
+    </form>
+
+    <table>
+        <thead><tr><th>メール</th><th>表示名</th><th>登録日</th><th>認証</th><th>管理者</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.email}">email</td>
+            <td th:text="${u.displayName}">名前</td>
+            <td th:text="${@dates.date(u.createdAt)}">日付</td>
+            <td th:text="${u.emailVerified} ? '✓' : '-'">-</td>
+            <td th:text="${u.admin} ? '管理者' : '-'">-</td>
+            <td class="actions">
+                <form th:action="@{/api/admin/users/{id}/toggle-admin(id=${u.id})}" method="post" class="inline">
+                    <button type="submit" class="linklike">管理者切替</button>
+                </form>
+                <span th:if="${u.passwordHash == 'suspended'}" class="badge badge-gray">停止済</span>
+                <form th:unless="${u.passwordHash == 'suspended'}" th:action="@{/api/admin/users/{id}/suspend(id=${u.id})}" method="post" class="inline"
+                      onsubmit="return confirm('このユーザーを停止しますか？');">
+                    <button type="submit" class="linklike" style="color:#dc2626;">停止</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 1}" style="margin-top:12px;">
+        <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <a th:if="${i != page}" th:href="@{/admin/users(q=${q},page=${i})}" th:text="${i}">1</a>
+            <span th:if="${i == page}" class="cur" th:text="${i}">1</span>
+        </th:block>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

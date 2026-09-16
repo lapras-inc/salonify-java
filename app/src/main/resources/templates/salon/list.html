@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('サロンを探す — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <h1>サロンを探す</h1>
+
+    <div style="margin-bottom:12px;">
+        <a class="pill" th:href="@{/salons(sort=${sort})}"
+           th:styleappend="${selectedCategory == null} ? 'background:#4f46e5;color:#fff;' : ''">すべて</a>
+        <a th:each="c : ${categories}" class="pill" th:href="@{/salons(category=${c},sort=${sort})}"
+           th:styleappend="${selectedCategory == c} ? 'background:#4f46e5;color:#fff;' : ''"
+           th:text="${c}">カテゴリ</a>
+    </div>
+    <div style="margin-bottom:16px;">
+        並び替え:
+        <a th:href="@{/salons(category=${selectedCategory})}"
+           th:styleappend="${sort != 'popular'} ? 'font-weight:700;' : ''">新着順</a> ·
+        <a th:href="@{/salons(category=${selectedCategory},sort='popular')}"
+           th:styleappend="${sort == 'popular'} ? 'font-weight:700;' : ''">人気順</a>
+    </div>
+
+    <p th:if="${cards.isEmpty()}" class="muted">該当するサロンがありません。</p>
+    <div class="grid">
+        <th:block th:each="card : ${cards}">
+            <div th:replace="~{fragments/common :: salonCard(${card})}"></div>
+        </th:block>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

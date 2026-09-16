@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: salon
+      POSTGRES_PASSWORD: salon
+      POSTGRES_DB: salon_dev
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U salon -d salon_dev"]
+      interval: 3s
+      retries: 10
+
+  app:
+    build: ./app
+    ports: ["8080:8080"]
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/salon_dev
+      DATABASE_USER: salon
+      DATABASE_PASSWORD: salon
+      SESSION_SECRET: dev-secret-change-me-please-32chars-min
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  uploads:

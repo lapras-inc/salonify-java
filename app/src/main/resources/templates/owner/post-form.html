@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('投稿 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <p><a th:href="@{/owner/salons/{id}/posts(id=${salon.id})}">← 投稿管理</a></p>
+    <h1 th:text="${post == null} ? '新規投稿' : '投稿を編集'">投稿</h1>
+
+    <form th:action="${post == null}
+            ? @{/api/owner/salons/{id}/posts/create(id=${salon.id})}
+            : @{/api/owner/salons/{id}/posts/{pid}/update(id=${salon.id},pid=${post.id})}"
+          method="post" class="card">
+        <label>タイトル</label>
+        <input type="text" name="title" maxlength="200" th:value="${post != null} ? ${post.title} : ''" required>
+
+        <label>本文（Markdown）</label>
+        <textarea id="body" name="bodyHtml" th:text="${post != null} ? ${defaultBody} : ''"></textarea>
+        <div style="margin-top:6px;">
+            <input type="file" id="imgfile" accept="image/*" style="display:inline;width:auto;">
+            <button type="button" class="btn btn-sm btn-secondary" onclick="insertImage()">画像を挿入</button>
+            <span id="imgstatus" class="muted"></span>
+        </div>
+
+        <label>YouTube URL（任意）</label>
+        <input type="text" name="videoUrl" th:value="${post != null} ? ${post.videoUrl} : ''">
+
+        <label>公開範囲</label>
+        <select name="visibility">
+            <option value="all" th:selected="${post == null or post.visibility == 'all'}">全会員</option>
+            <option th:each="p : ${plans}" th:value="'plan:' + ${p.id}"
+                    th:text="${p.name} + ' 限定'"
+                    th:selected="${post != null and post.visibility == 'plan:' + p.id}">プラン限定</option>
+        </select>
+
+        <label style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" name="pinned" value="1" style="width:auto;"
+                   th:checked="${post != null and post.pinned}"> 投稿一覧の先頭に固定する
+        </label>
+
+        <div style="margin-top:16px;">
+            <button type="submit" class="btn">公開する</button>
+            <button type="submit" class="btn btn-secondary" name="draft" value="1">下書き保存</button>
+        </div>
+    </form>
+</main>
+
+<script th:inline="none">
+async function insertImage() {
+    const input = document.getElementById('imgfile');
+    const status = document.getElementById('imgstatus');
+    if (!input.files || !input.files[0]) { status.textContent = 'ファイルを選択してください'; return; }
+    const fd = new FormData();
+    fd.append('file', input.files[0]);
+    status.textContent = 'アップロード中...';
+    try {
+        const res = await fetch('/api/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!res.ok) { status.textContent = data.error || 'アップロードに失敗しました'; return; }
+        const ta = document.getElementById('body');
+        const md = '![' + input.files[0].name + '](' + data.url + ')';
+        const pos = ta.selectionStart || ta.value.length;
+        ta.value = ta.value.slice(0, pos) + md + ta.value.slice(pos);
+        status.textContent = '挿入しました';
+    } catch (e) {
+        status.textContent = 'アップロードに失敗しました';
+    }
+}
+</script>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

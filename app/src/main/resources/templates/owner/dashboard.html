@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('運営ダッシュボード — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <h1 th:text="${salon.name}">サロン名</h1>
+        <a class="btn btn-sm btn-secondary" th:href="@{/salons/{id}(id=${salon.id})}">LP</a>
+        <a class="btn btn-sm btn-secondary" th:href="@{/owner/salons/{id}/edit(id=${salon.id})}">設定</a>
+    </div>
+
+    <div class="card">
+        <span class="stat"><span class="num" th:text="'¥' + ${monthlyRevenue}">¥0</span>月次売上見込み</span>
+        <span class="stat"><span class="num" th:text="${activeCount}">0</span>アクティブ会員</span>
+        <span class="stat"><span class="num" th:text="${postCount}">0</span>投稿</span>
+        <span class="stat"><span class="num" th:text="${threadCount}">0</span>スレッド</span>
+    </div>
+
+    <div class="card">
+        <h2>プラン別会員数</h2>
+        <table>
+            <thead><tr><th>プラン</th><th>月額</th><th>会員数</th></tr></thead>
+            <tbody>
+            <tr th:each="p : ${plans}">
+                <td th:text="${p.name}">プラン</td>
+                <td th:text="'¥' + ${p.priceJpy}">¥0</td>
+                <td th:text="${perPlanCount.get(p.id)}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" th:if="${invites != null}">
+        <h2>招待URL</h2>
+        <ul>
+            <li th:each="inv : ${invites}" th:unless="${inv.disabled}">
+                <code th:text="${origin} + '/salons/' + ${salon.id} + '?invite=' + ${inv.code}">URL</code>
+                <span class="muted" th:text="' (利用 ' + ${inv.uses} + '回)'"></span>
+            </li>
+        </ul>
+        <form th:action="@{/api/owner/salons/{id}/invite/create(id=${salon.id})}" method="post">
+            <input type="hidden" name="redirect" th:value="'/owner/salons/' + ${salon.id} + '/dashboard'">
+            <label>用途メモ（任意）</label>
+            <input type="text" name="label" maxlength="40">
+            <button type="submit" class="btn btn-sm">招待URLを発行</button>
+        </form>
+    </div>
+
+    <div class="grid">
+        <a class="card" th:href="@{/owner/salons/{id}/members(id=${salon.id})}">会員管理</a>
+        <a class="card" th:href="@{/owner/salons/{id}/posts(id=${salon.id})}">投稿管理</a>
+        <a class="card" th:href="@{/owner/salons/{id}/revenue(id=${salon.id})}">売上・振込</a>
+        <a class="card" th:href="@{/salons/{id}/home(id=${salon.id})}">サロンホーム</a>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

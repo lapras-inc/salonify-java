@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('新規登録 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div class="card form-narrow">
+        <h1>新規登録</h1>
+        <p th:if="${error == 'exists'}" class="flash flash-error">このメールアドレスは登録済みです</p>
+        <p th:if="${error == 'invalid'}" class="flash flash-error">入力内容を確認してください（表示名40文字以内・パスワード8文字以上）</p>
+        <p th:if="${error == 'rate'}" class="flash flash-error">試行回数が多すぎます。しばらくしてから再度お試しください</p>
+        <form th:action="@{/api/auth/signup}" method="post">
+            <input type="hidden" name="next" th:value="${next}">
+            <label>表示名</label>
+            <input type="text" name="displayName" maxlength="40" required>
+            <label>メールアドレス</label>
+            <input type="email" name="email" required>
+            <label>パスワード（8文字以上）</label>
+            <input type="password" name="password" minlength="8" required>
+            <div style="margin-top:16px;">
+                <button type="submit" class="btn">登録して認証コードを受け取る</button>
+            </div>
+        </form>
+        <p style="margin-top:16px;"><a th:href="@{/login(next=${next})}">ログインはこちら</a></p>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

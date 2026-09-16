@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('通報管理 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/admin}">← 管理トップ</a></p>
+    <h1>通報管理</h1>
+
+    <p th:if="${rows.isEmpty()}" class="muted">通報はありません。</p>
+    <table th:unless="${rows.isEmpty()}">
+        <thead><tr><th>スレッド</th><th>通報者</th><th>理由</th><th>状態</th><th>日時</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="row : ${rows}">
+            <td>
+                <a th:if="${row.thread != null}"
+                   th:href="@{/salons/{sid}/board/all/{tid}(sid=${row.thread.salonId},tid=${row.thread.id})}"
+                   th:text="${row.thread.title}">スレッド</a>
+                <span th:unless="${row.thread != null}" class="muted">削除済</span>
+            </td>
+            <td th:text="${row.reporter}">通報者</td>
+            <td th:text="${row.report.reason}">理由</td>
+            <td>
+                <span th:if="${row.report.resolved}" class="badge badge-green">解決済</span>
+                <span th:unless="${row.report.resolved}" class="badge badge-amber">未解決</span>
+            </td>
+            <td th:text="${@dates.dateTime(row.report.createdAt)}">日時</td>
+            <td>
+                <form th:unless="${row.report.resolved}" th:action="@{/api/admin/reports/{id}/resolve(id=${row.report.id})}" method="post" class="inline">
+                    <button type="submit" class="linklike">解決済にする</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

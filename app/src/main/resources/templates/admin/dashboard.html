@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('管理 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <h1>プラットフォーム管理</h1>
+
+    <div class="card">
+        <span class="stat"><span class="num" th:text="${userCount}">0</span>ユーザー</span>
+        <span class="stat"><span class="num" th:text="${salonCount}">0</span>サロン</span>
+        <span class="stat"><span class="num" th:text="${activeMembershipCount}">0</span>有効メンバーシップ</span>
+        <span class="stat"><span class="num" th:text="'¥' + ${totalRevenue}">¥0</span>総売上</span>
+    </div>
+
+    <div class="grid">
+        <a class="card" th:href="@{/admin/users}">ユーザー管理</a>
+        <a class="card" th:href="@{/admin/salons}">サロン管理</a>
+        <a class="card" th:href="@{/admin/reports}">通報管理</a>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

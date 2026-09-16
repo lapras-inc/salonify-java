@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('掲示板 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/salons/{id}/home(id=${salon.id})}">← サロンホーム</a></p>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h1>掲示板</h1>
+        <a class="btn btn-sm" th:href="@{/salons/{id}/board/{cat}/new(id=${salon.id},cat=${categoryId})}">+ 新規スレッド</a>
+    </div>
+
+    <p th:if="${rows.isEmpty()}" class="muted">まだスレッドがありません。</p>
+    <table th:unless="${rows.isEmpty()}">
+        <thead><tr><th>タイトル</th><th>投稿者</th><th>返信</th><th>いいね</th></tr></thead>
+        <tbody>
+        <tr th:each="row : ${rows}">
+            <td><a th:href="@{/salons/{id}/board/{cat}/{tid}(id=${salon.id},cat=${categoryId},tid=${row.thread.id})}" th:text="${row.thread.title}">タイトル</a></td>
+            <td th:text="${row.author}">投稿者</td>
+            <td th:text="${row.commentCount}">0</td>
+            <td th:text="${row.reactionCount}">0</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 1}" style="margin-top:12px;">
+        <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <a th:if="${i != page}" th:href="@{/salons/{id}/board/{cat}(id=${salon.id},cat=${categoryId},page=${i})}" th:text="${i}">1</a>
+            <span th:if="${i == page}" class="cur" th:text="${i}">1</span>
+        </th:block>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

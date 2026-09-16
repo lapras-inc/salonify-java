@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead(${post.title} + ' — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/salons/{id}/posts(id=${salon.id})}">← 投稿一覧</a></p>
+
+    <div class="card" th:if="${!canView}">
+        <h1 th:text="${post.title}">タイトル</h1>
+        <p class="flash flash-error" th:text="'この投稿は「' + ${planName} + '」限定です。上位プランへの変更で閲覧できます。'">限定</p>
+        <a class="btn" th:href="@{/salons/{id}(id=${salon.id})}">プランを見る</a>
+    </div>
+
+    <div th:if="${canView}">
+        <div class="card">
+            <span th:if="${post.pinned}">📌</span>
+            <span th:replace="~{fragments/common :: postBadge(${planName})}"></span>
+            <h1 th:text="${post.title}">タイトル</h1>
+            <p class="muted" th:text="${@dates.date(post.createdAt)}">日付</p>
+
+            <div th:if="${youtubeId != null}" style="margin:12px 0;">
+                <iframe width="100%" height="360" th:src="'https://www.youtube.com/embed/' + ${youtubeId}"
+                        frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <div class="prose" th:utext="${post.bodyHtml}">本文</div>
+        </div>
+
+        <div class="card">
+            <form th:action="@{/api/posts/{id}/react(id=${post.id})}" method="post" class="inline">
+                <button type="submit" class="btn btn-sm" th:classappend="${liked} ? '' : 'btn-secondary'"
+                        th:text="(${liked} ? '♥ いいね済み ' : '♡ いいね ') + '(' + ${likeCount} + ')'">いいね</button>
+            </form>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

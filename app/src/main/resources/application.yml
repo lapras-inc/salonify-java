@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/salon_dev}
+    username: ${DATABASE_USER:salon}
+    password: ${DATABASE_PASSWORD:salon}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      # Raise framework limits above the app's own 4MB check so /api/upload returns its 400 message
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+salonify:
+  session-secret: ${SESSION_SECRET:dev-secret-change-me-please-32chars-min}
+  upload-dir: ${UPLOAD_DIR:/app/uploads}
+  stripe-secret-key: ${STRIPE_SECRET_KEY:}
+
+logging:
+  level:
+    org.hibernate.SQL: warn

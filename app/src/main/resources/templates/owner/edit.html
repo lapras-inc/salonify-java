@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('サロン設定 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/owner/salons/{id}/dashboard(id=${salon.id})}">← ダッシュボード</a></p>
+    <h1>サロン設定</h1>
+
+    <form th:action="@{/api/owner/salons/{id}/update(id=${salon.id})}" method="post" class="card">
+        <label>サロン名</label>
+        <input type="text" name="name" maxlength="80" th:value="${salon.name}" required>
+        <label>キャッチコピー</label>
+        <input type="text" name="tagline" maxlength="140" th:value="${salon.tagline}">
+        <label>説明（Markdown可）</label>
+        <textarea name="description" th:text="${salon.description}"></textarea>
+        <label>カテゴリ</label>
+        <select name="category">
+            <option th:each="c : ${categories}" th:value="${c}" th:text="${c}" th:selected="${c == salon.category}">カテゴリ</option>
+        </select>
+        <label>公開設定</label>
+        <select name="visibility">
+            <option value="public" th:selected="${salon.visibility == 'public'}">公開</option>
+            <option value="invite" th:selected="${salon.visibility == 'invite'}">招待URL限定</option>
+        </select>
+        <label>カバー画像URL（任意）</label>
+        <input type="text" name="coverUrl" th:value="${salon.coverUrl}">
+        <label>サムネイル画像URL（任意）</label>
+        <input type="text" name="thumbUrl" th:value="${salon.thumbUrl}">
+        <div style="margin-top:16px;"><button type="submit" class="btn">更新する</button></div>
+    </form>
+
+    <div class="card" th:if="${invites != null}">
+        <h2>招待URL管理</h2>
+        <table>
+            <thead><tr><th>状態</th><th>URL</th><th>利用</th><th>用途</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="inv : ${invites}">
+                <td>
+                    <span th:if="${inv.disabled}" class="badge badge-gray">無効化済み</span>
+                    <span th:if="${!inv.disabled and inv.expiresAt != null and inv.expiresAt.isBefore(T(java.time.Instant).now())}" class="badge badge-gray">期限切れ</span>
+                    <span th:if="${!inv.disabled and inv.maxUses > 0 and inv.uses >= inv.maxUses}" class="badge badge-gray">上限到達</span>
+                    <span th:if="${!inv.disabled and (inv.expiresAt == null or !inv.expiresAt.isBefore(T(java.time.Instant).now())) and (inv.maxUses == 0 or inv.uses < inv.maxUses)}" class="badge badge-green">有効</span>
+                </td>
+                <td><code th:text="${origin} + '/salons/' + ${salon.id} + '?invite=' + ${inv.code}">URL</code></td>
+                <td th:text="${inv.uses} + (${inv.maxUses} == 0 ? '/無制限' : '/' + ${inv.maxUses})">0</td>
+                <td th:text="${inv.label}"></td>
+                <td>
+                    <form th:if="${!inv.disabled}" th:action="@{/api/owner/salons/{id}/invite/disable(id=${salon.id})}" method="post" class="inline">
+                        <input type="hidden" name="inviteId" th:value="${inv.id}">
+                        <button type="submit" class="linklike">無効化</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <details style="margin-top:12px;">
+            <summary>招待URLを追加発行</summary>
+            <form th:action="@{/api/owner/salons/{id}/invite/create(id=${salon.id})}" method="post">
+                <label>用途メモ</label>
+                <input type="text" name="label" maxlength="40">
+                <label>利用上限（0=無制限）</label>
+                <input type="number" name="maxUses" value="0" min="0">
+                <label>有効日数（0=無期限）</label>
+                <input type="number" name="expDays" value="0" min="0">
+                <button type="submit" class="btn btn-sm">発行</button>
+            </form>
+        </details>
+    </div>
+
+    <div class="card">
+        <h2>料金プラン</h2>
+        <div class="card" th:each="plan : ${plans}">
+            <form th:action="@{/api/owner/salons/{id}/plan/update(id=${salon.id})}" method="post">
+                <input type="hidden" name="planId" th:value="${plan.id}">
+                <label>プラン名</label>
+                <input type="text" name="name" th:value="${plan.name}">
+                <label>月額（円）</label>
+                <input type="number" name="priceJpy" th:value="${plan.priceJpy}" min="0" max="100000">
+                <label>トライアル日数</label>
+                <input type="number" name="trialDays" th:value="${plan.trialDays}" min="0" max="30">
+                <label>初月割引（円）</label>
+                <input type="number" name="introDiscount" th:value="${plan.introDiscount}" min="0">
+                <label>説明</label>
+                <input type="text" name="description" th:value="${plan.description}">
+                <div style="margin-top:8px;"><button type="submit" class="btn btn-sm">このプランを更新</button></div>
+            </form>
+        </div>
+
+        <h3 style="margin-top:16px;">新規プラン追加</h3>
+        <form th:action="@{/api/owner/salons/{id}/plan/create(id=${salon.id})}" method="post">
+            <label>プラン名</label>
+            <input type="text" name="name" required>
+            <label>月額（円）</label>
+            <input type="number" name="priceJpy" value="980" min="0" max="100000">
+            <label>トライアル日数</label>
+            <input type="number" name="trialDays" value="0" min="0" max="30">
+            <label>初月割引（円）</label>
+            <input type="number" name="introDiscount" value="0" min="0">
+            <label>説明</label>
+            <input type="text" name="description">
+            <div style="margin-top:8px;"><button type="submit" class="btn btn-sm">プランを追加</button></div>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

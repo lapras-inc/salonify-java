@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('サロン管理 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/admin}">← 管理トップ</a></p>
+    <h1>サロン管理</h1>
+
+    <table>
+        <thead><tr><th>サロン名</th><th>オーナー</th><th>カテゴリ</th><th>公開</th><th>会員数</th><th>作成日</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="row : ${rows}">
+            <td><a th:href="@{/salons/{id}(id=${row.salon.id})}" th:text="${row.salon.name}">サロン</a></td>
+            <td th:text="${row.ownerEmail}">owner</td>
+            <td th:text="${row.salon.category}">カテゴリ</td>
+            <td th:text="${row.salon.visibility}">公開</td>
+            <td th:text="${row.memberCount}">0</td>
+            <td th:text="${@dates.date(row.salon.createdAt)}">日付</td>
+            <td>
+                <form th:action="@{/api/admin/salons/{id}/delete(id=${row.salon.id})}" method="post" class="inline"
+                      onsubmit="return confirm('このサロンを削除しますか？関連データも全て削除されます。');">
+                    <button type="submit" class="linklike" style="color:#dc2626;">削除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 1}" style="margin-top:12px;">
+        <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <a th:if="${i != page}" th:href="@{/admin/salons(page=${i})}" th:text="${i}">1</a>
+            <span th:if="${i == page}" class="cur" th:text="${i}">1</span>
+        </th:block>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

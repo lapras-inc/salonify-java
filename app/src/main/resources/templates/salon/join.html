@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('入会 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <p><a th:href="@{/salons/{id}(id=${salon.id})}">← サロンページ</a></p>
+    <h1 th:text="${salon.name} + ' に入会'">入会</h1>
+
+    <div class="card form-narrow">
+        <h2 th:text="${plan.name} + ' プラン'">プラン</h2>
+        <table>
+            <tr><td>月額</td><td th:text="'¥' + ${plan.priceJpy}">¥0</td></tr>
+            <tr th:if="${plan.introDiscount > 0}"><td>初月割引</td><td th:text="'-¥' + ${plan.introDiscount}">-¥0</td></tr>
+            <tr th:if="${plan.trialDays > 0}"><td>無料トライアル</td><td th:text="${plan.trialDays} + '日間'">0日</td></tr>
+            <tr><td><strong>初回請求額</strong></td><td><strong th:text="'¥' + ${firstAmount}">¥0</strong></td></tr>
+        </table>
+        <p class="muted" style="margin-top:8px;">※決済はモック実装です。実際の課金は行われません。</p>
+        <form th:action="@{/api/join}" method="post" style="margin-top:12px;">
+            <input type="hidden" name="salonId" th:value="${salon.id}">
+            <input type="hidden" name="planId" th:value="${plan.id}">
+            <input type="hidden" name="invite" th:value="${invite}">
+            <button type="submit" class="btn">入会する</button>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

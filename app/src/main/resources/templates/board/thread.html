@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead(${thread.title} + ' — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/salons/{id}/board/{cat}(id=${salon.id},cat=${categoryId})}">← スレッド一覧</a></p>
+
+    <div class="card">
+        <h1 th:text="${thread.title}">タイトル</h1>
+        <p class="muted" th:text="${threadAuthor} + ' · ' + ${@dates.dateTime(thread.createdAt)}">投稿者</p>
+        <div class="prose" th:utext="${threadBodyHtml}">本文</div>
+        <div style="margin-top:8px;">
+            <form th:action="@{/api/threads/{id}/react(id=${thread.id})}" method="post" class="inline">
+                <button type="submit" class="btn btn-sm" th:classappend="${liked} ? '' : 'btn-secondary'"
+                        th:text="'♥ ' + ${reactionCount}">いいね</button>
+            </form>
+            <form th:action="@{/api/threads/{id}/report(id=${thread.id})}" method="post" class="inline"
+                  onsubmit="return confirm('このスレッドを通報しますか？');">
+                <input type="hidden" name="reason" value="user report">
+                <button type="submit" class="linklike">通報</button>
+            </form>
+        </div>
+    </div>
+
+    <h2>コメント</h2>
+    <div class="card" th:each="node : ${comments}">
+        <p class="muted" th:text="${node.author} + ' · ' + ${@dates.dateTime(node.comment.createdAt)}">投稿者</p>
+        <div class="prose" th:utext="${node.bodyHtml}">コメント</div>
+
+        <!-- replies (1 level) -->
+        <div th:each="reply : ${node.replies}" style="margin-left:24px;border-left:2px solid #eee;padding-left:12px;margin-top:8px;">
+            <p class="muted" th:text="${reply.author} + ' · ' + ${@dates.dateTime(reply.comment.createdAt)}">投稿者</p>
+            <div class="prose" th:utext="${reply.bodyHtml}">返信</div>
+        </div>
+
+        <!-- reply form -->
+        <form th:action="@{/api/threads/{id}/comment(id=${thread.id})}" method="post" style="margin-top:8px;">
+            <input type="hidden" name="parentId" th:value="${node.comment.id}">
+            <textarea name="body" style="min-height:60px;" placeholder="返信する" required></textarea>
+            <button type="submit" class="btn btn-sm">返信</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>新しいコメント</h3>
+        <form th:action="@{/api/threads/{id}/comment(id=${thread.id})}" method="post">
+            <textarea name="body" required></textarea>
+            <button type="submit" class="btn btn-sm">コメントする</button>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

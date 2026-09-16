@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('パスワードをお忘れの方 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div class="card form-narrow">
+        <h1>パスワードの再設定</h1>
+        <p th:if="${msg == 'not-found'}" class="flash flash-error">このメールアドレスは登録されていません</p>
+        <p th:if="${msg == 'rate'}" class="flash flash-error">試行回数が多すぎます。しばらくお待ちください</p>
+        <p th:if="${msg == 'sent'}" class="flash flash-ok">リセットコードを送信しました</p>
+        <p class="muted">登録済みのメールアドレスを入力してください。リセットコードをお送りします。</p>
+        <form th:action="@{/api/auth/forgot-password}" method="post">
+            <label>メールアドレス</label>
+            <input type="email" name="email" required>
+            <div style="margin-top:16px;">
+                <button type="submit" class="btn">リセットコードを送る</button>
+            </div>
+        </form>
+        <p style="margin-top:16px;"><a th:href="@{/login}">ログインへ戻る</a></p>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

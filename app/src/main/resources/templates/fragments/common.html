@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- ========== head ========== -->
+<head th:fragment="pagehead(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Salonify</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<!-- ========== header ========== -->
+<header th:fragment="siteheader" class="site-header">
+    <div class="container header-inner">
+        <a class="logo" th:href="@{/}">Salonify</a>
+        <nav class="nav">
+            <a th:href="@{/salons}">サロンを探す</a>
+            <th:block th:if="${currentUser == null}">
+                <a th:href="@{/login}">ログイン</a>
+                <a class="btn btn-sm" th:href="@{/signup}">新規登録</a>
+            </th:block>
+            <th:block th:if="${currentUser != null}">
+                <a th:href="@{/dashboard}">マイページ</a>
+                <a th:href="@{/owner/salons/new}">サロン開設</a>
+                <a th:if="${currentUser.admin}" th:href="@{/admin}">管理</a>
+                <a th:href="@{/account}" th:text="${currentUser.displayName}">ユーザー</a>
+                <form th:action="@{/api/auth/logout}" method="post" class="inline">
+                    <button type="submit" class="linklike">ログアウト</button>
+                </form>
+            </th:block>
+        </nav>
+    </div>
+</header>
+
+<!-- ========== flash ========== -->
+<div th:fragment="flash" th:if="${param.msg != null}"
+     class="flash flash-ok">
+    <span th:text="${@messages.text(param.msg[0])}">message</span>
+</div>
+
+<!-- ========== salon card ========== -->
+<a th:fragment="salonCard(card)" class="salon-card" th:href="@{'/salons/' + ${card.id}}">
+    <div class="cover" th:if="${card.thumbUrl == null}" th:text="${card.category}">CATEGORY</div>
+    <img th:if="${card.thumbUrl != null}" th:src="${card.thumbUrl}" alt="" class="cover" style="object-fit:cover;">
+    <div class="body">
+        <span class="pill" th:text="${card.category}">カテゴリ</span>
+        <h3 style="margin:8px 0 4px;" th:text="${card.name}">サロン名</h3>
+        <p class="muted" th:text="${card.tagline}">キャッチコピー</p>
+        <p class="muted">
+            <span th:text="'会員 ' + ${card.memberCount} + '人'">会員 0人</span>
+            <span th:if="${card.minPrice != null}" th:text="' · ¥' + ${card.minPrice} + '〜/月'"></span>
+        </p>
+    </div>
+</a>
+
+<!-- ========== post visibility badge ========== -->
+<span th:fragment="postBadge(planName)" class="badge"
+      th:classappend="${planName == null} ? 'badge-gray' : 'badge-amber'"
+      th:text="${planName == null} ? '全会員' : (${planName} + '限定')">バッジ</span>
+
+<!-- ========== footer ========== -->
+<footer th:fragment="sitefooter" class="site-footer">
+    <div class="container">
+        <small>© Salonify · プラットフォーム手数料5% · 決済はモック実装</small>
+    </div>
+</footer>
+
+</body>
+</html>

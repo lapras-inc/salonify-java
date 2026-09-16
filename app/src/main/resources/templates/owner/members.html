@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('会員管理 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/owner/salons/{id}/dashboard(id=${salon.id})}">← ダッシュボード</a></p>
+    <h1>会員管理</h1>
+
+    <p th:if="${rows.isEmpty()}" class="muted">まだ会員がいません。</p>
+    <table th:unless="${rows.isEmpty()}">
+        <thead><tr><th>会員</th><th>入会日</th><th>プラン</th><th>ステータス</th><th>直近決済</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="row : ${rows}">
+            <td>
+                <span th:text="${row.user != null} ? ${row.user.displayName} : '?'">名前</span><br>
+                <span class="muted" th:text="${row.user != null} ? ${row.user.email} : ''">email</span>
+            </td>
+            <td th:text="${@dates.date(row.membership.joinedAt)}">日付</td>
+            <td>
+                <form th:action="@{/api/owner/salons/{id}/members/change-plan(id=${salon.id})}" method="post" class="inline">
+                    <input type="hidden" name="membershipId" th:value="${row.membership.id}">
+                    <select name="planId">
+                        <option th:each="p : ${plans}" th:value="${p.id}" th:text="${p.name}"
+                                th:selected="${p.id == row.membership.planId}">プラン</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm">変更</button>
+                </form>
+            </td>
+            <td>
+                <span class="badge"
+                      th:classappend="${row.membership.status == 'active'} ? 'badge-green' : (${row.membership.status == 'past_due'} ? 'badge-amber' : 'badge-gray')"
+                      th:text="${row.membership.status}">status</span>
+            </td>
+            <td>
+                <span th:if="${row.lastInvoice != null}" th:text="'¥' + ${row.lastInvoice.amountJpy} + ' (' + ${row.lastInvoice.status} + ')'">-</span>
+                <span th:unless="${row.lastInvoice != null}" class="muted">-</span>
+            </td>
+            <td>
+                <form th:action="@{/api/owner/salons/{id}/members/remove(id=${salon.id})}" method="post" class="inline"
+                      onsubmit="return confirm('この会員を退会させますか？');">
+                    <input type="hidden" name="membershipId" th:value="${row.membership.id}">
+                    <button type="submit" class="linklike" style="color:#dc2626;">退会させる</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

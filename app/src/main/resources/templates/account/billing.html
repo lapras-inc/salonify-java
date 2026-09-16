@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('支払い・課金管理 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <h1>支払い・課金管理</h1>
+
+    <p th:if="${rows.isEmpty()}" class="muted">加入中のプランはありません。</p>
+
+    <div class="card" th:each="row : ${rows}">
+        <h2 th:text="${row.salon != null} ? ${row.salon.name} : '(削除済みサロン)'">サロン</h2>
+        <p>
+            プラン: <span th:text="${row.plan != null} ? ${row.plan.name} : '-'">プラン</span> ·
+            ステータス: <span th:text="${row.membership.status}">status</span>
+            <form th:if="${row.membership.status == 'active'}" th:action="@{/api/membership/cancel}" method="post"
+                  class="inline" onsubmit="return confirm('このプランを解約しますか？');">
+                <input type="hidden" name="membershipId" th:value="${row.membership.id}">
+                <button type="submit" class="linklike" style="color:#dc2626;">解約する</button>
+            </form>
+        </p>
+        <table th:if="${!row.invoices.isEmpty()}">
+            <thead><tr><th>日付</th><th>金額</th><th>ステータス</th></tr></thead>
+            <tbody>
+            <tr th:each="inv : ${row.invoices}">
+                <td th:text="${@dates.date(inv.createdAt)}">日付</td>
+                <td th:text="'¥' + ${inv.amountJpy}">¥0</td>
+                <td th:text="${inv.status}">status</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

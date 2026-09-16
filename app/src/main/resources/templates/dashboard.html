@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('マイページ — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <h1>マイページ</h1>
+
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>参加中のサロン</h2>
+            <a class="btn btn-sm btn-secondary" th:href="@{/salons}">サロンを探す</a>
+        </div>
+        <p th:if="${joined.isEmpty()}" class="muted">まだ参加中のサロンはありません。</p>
+        <ul>
+            <li th:each="row : ${joined}" th:if="${row.salon != null}">
+                <a th:href="@{/salons/{id}/home(id=${row.salon.id})}" th:text="${row.salon.name}">サロン</a>
+                <span class="muted" th:if="${row.plan != null}" th:text="' — ' + ${row.plan.name} + 'プラン'"></span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>運営中のサロン</h2>
+            <a class="btn btn-sm" th:href="@{/owner/salons/new}">+ 新規開設</a>
+        </div>
+        <p th:if="${owned.isEmpty()}" class="muted">まだ運営中のサロンはありません。</p>
+        <ul>
+            <li th:each="row : ${owned}">
+                <a th:href="@{/owner/salons/{id}/dashboard(id=${row.salon.id})}" th:text="${row.salon.name}">サロン</a>
+                <span class="muted" th:text="' — 会員 ' + ${row.memberCount} + '人'"></span>
+            </li>
+        </ul>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

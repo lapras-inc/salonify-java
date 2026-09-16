@@ -1,0 +1,81 @@
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+    color: #1a1a1a;
+    background: #f7f7f8;
+    line-height: 1.6;
+}
+.container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+
+/* header */
+.site-header { background: #fff; border-bottom: 1px solid #e5e5e5; }
+.header-inner { display: flex; align-items: center; height: 56px; gap: 16px; }
+.logo { font-weight: 700; font-size: 20px; color: #4f46e5; text-decoration: none; }
+.nav { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.nav a { color: #333; text-decoration: none; font-size: 14px; }
+.nav a:hover { color: #4f46e5; }
+/* buttons rendered as links must keep their own (white) text, even inside .nav */
+.nav a.btn, .nav a.btn:hover { color: #fff; }
+
+/* footer */
+.site-footer { margin-top: 48px; padding: 24px 0; color: #888; border-top: 1px solid #e5e5e5; }
+
+/* layout */
+main.container { padding-top: 24px; padding-bottom: 24px; }
+h1 { font-size: 24px; }
+h2 { font-size: 19px; }
+
+/* cards */
+.card { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.salon-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden; text-decoration: none; color: inherit; display: block; }
+.salon-card:hover { border-color: #4f46e5; }
+.salon-card .cover { height: 120px; background: linear-gradient(135deg,#6366f1,#a855f7); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
+.salon-card .body { padding: 12px; }
+.muted { color: #888; font-size: 13px; }
+.pill { display:inline-block; background:#eef; color:#4338ca; font-size:12px; padding:2px 8px; border-radius:999px; }
+
+/* buttons */
+.btn { display: inline-block; background: #4f46e5; color: #fff; border: none; border-radius: 6px;
+    padding: 9px 16px; font-size: 14px; cursor: pointer; text-decoration: none; }
+.btn:hover { background: #4338ca; }
+.btn:disabled, .btn.disabled { background: #bbb; cursor: not-allowed; }
+.btn-sm { padding: 5px 12px; font-size: 13px; }
+.btn-secondary { background: #6b7280; }
+.btn-danger { background: #dc2626; }
+.linklike { background:none; border:none; color:#333; cursor:pointer; font-size:14px; padding:0; }
+.linklike:hover { color:#4f46e5; }
+form.inline { display: inline; }
+
+/* forms */
+label { display:block; font-size: 13px; font-weight: 600; margin: 12px 0 4px; }
+input[type=text], input[type=email], input[type=password], input[type=number], textarea, select {
+    width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: inherit;
+}
+textarea { min-height: 140px; }
+.form-narrow { max-width: 420px; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; background:#fff; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+th { background: #fafafa; font-size: 13px; color:#555; }
+
+/* flash */
+.flash { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
+.flash-ok { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.flash-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* misc */
+.badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:4px; }
+.badge-gray { background:#eee; color:#555; }
+.badge-amber { background:#fef3c7; color:#92400e; }
+.badge-green { background:#dcfce7; color:#166534; }
+.stat { display:inline-block; margin-right:24px; }
+.stat .num { font-size: 24px; font-weight: 700; display:block; }
+.draft-row { background: #fffbeb; }
+.actions a, .actions form { margin-right: 8px; }
+.prose img { max-width: 100%; }
+.pagination a, .pagination span { margin-right: 6px; text-decoration:none; }
+.pagination .cur { font-weight: 700; }
+.dev-code { background:#fef9c3; border:1px dashed #ca8a04; padding:8px 12px; border-radius:6px; margin:12px 0; font-size:14px; }

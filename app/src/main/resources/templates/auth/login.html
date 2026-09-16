@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('ログイン — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <div class="card form-narrow">
+        <h1>ログイン</h1>
+        <p th:if="${error == 'invalid'}" class="flash flash-error">メールアドレスまたはパスワードが正しくありません</p>
+        <form th:action="@{/api/auth/login}" method="post">
+            <input type="hidden" name="next" th:value="${next}">
+            <label>メールアドレス</label>
+            <input type="email" name="email" required>
+            <label>パスワード</label>
+            <input type="password" name="password" required>
+            <div style="margin-top:16px;">
+                <button type="submit" class="btn">ログイン</button>
+            </div>
+        </form>
+        <p style="margin-top:16px;">
+            <a th:href="@{/forgot-password}">パスワードを忘れた方</a> ·
+            <a th:href="@{/signup(next=${next})}">新規登録</a>
+        </p>
+    </div>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

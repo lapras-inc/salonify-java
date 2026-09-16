@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('投稿管理 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <div th:replace="~{fragments/common :: flash}"></div>
+    <p><a th:href="@{/owner/salons/{id}/dashboard(id=${salon.id})}">← ダッシュボード</a></p>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h1>投稿管理</h1>
+        <a class="btn btn-sm" th:href="@{/owner/salons/{id}/posts/new(id=${salon.id})}">新規投稿</a>
+    </div>
+
+    <table>
+        <thead><tr><th>タイトル</th><th>作成日</th><th>状態</th><th>公開範囲</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="post : ${posts}" th:classappend="${post.draft} ? 'draft-row' : ''">
+            <td><span th:if="${post.pinned}">📌</span> <span th:text="${post.title}">タイトル</span></td>
+            <td th:text="${@dates.date(post.createdAt)}">日付</td>
+            <td>
+                <span th:if="${post.draft}" class="badge badge-amber">下書き</span>
+                <span th:unless="${post.draft}" class="badge badge-green">公開中</span>
+            </td>
+            <td th:text="${post.visibility == 'all'} ? '全会員' : 'プラン限定'">範囲</td>
+            <td class="actions">
+                <a th:href="@{/salons/{id}/posts/{pid}(id=${salon.id},pid=${post.id})}">表示</a>
+                <a th:href="@{/owner/salons/{id}/posts/{pid}/edit(id=${salon.id},pid=${post.id})}">編集</a>
+                <form th:action="@{/api/owner/salons/{id}/posts/{pid}/delete(id=${salon.id},pid=${post.id})}" method="post"
+                      class="inline" onsubmit="return confirm('この投稿を削除しますか？');">
+                    <button type="submit" class="linklike" style="color:#dc2626;">削除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>

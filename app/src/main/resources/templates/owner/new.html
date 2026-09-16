@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/common :: pagehead('サロン開設 — Salonify')}"></head>
+<body>
+<header th:replace="~{fragments/common :: siteheader}"></header>
+<main class="container">
+    <h1>サロンを開設する</h1>
+    <form th:action="@{/api/owner/salons/create}" method="post" class="card">
+        <label>サロン名</label>
+        <input type="text" name="name" maxlength="80" required>
+        <label>キャッチコピー</label>
+        <input type="text" name="tagline" maxlength="140">
+        <label>説明（Markdown可）</label>
+        <textarea name="description"></textarea>
+        <label>カテゴリ</label>
+        <select name="category">
+            <option th:each="c : ${categories}" th:value="${c}" th:text="${c}">カテゴリ</option>
+        </select>
+        <label>公開設定</label>
+        <select name="visibility">
+            <option value="public">公開</option>
+            <option value="invite">招待URL限定</option>
+        </select>
+        <label>カバー画像URL（任意）</label>
+        <input type="text" name="coverUrl">
+        <label>サムネイル画像URL（任意）</label>
+        <input type="text" name="thumbUrl">
+
+        <h2 style="margin-top:24px;">初期プラン</h2>
+        <label>プラン名</label>
+        <input type="text" name="planName" value="スタンダード">
+        <label>月額（円 0〜100000）</label>
+        <input type="number" name="planPrice" value="980" min="0" max="100000">
+        <label>無料トライアル日数（0〜30）</label>
+        <input type="number" name="planTrial" value="0" min="0" max="30">
+        <label>初月割引（円）</label>
+        <input type="number" name="planDiscount" value="0" min="0">
+
+        <div style="margin-top:16px;">
+            <button type="submit" class="btn">サロンを開設する</button>
+        </div>
+    </form>
+</main>
+<footer th:replace="~{fragments/common :: sitefooter}"></footer>
+</body>
+</html>
